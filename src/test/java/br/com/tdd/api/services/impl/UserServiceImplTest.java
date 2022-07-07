@@ -104,10 +104,11 @@ class UserServiceImplTest {
 
     @Test
     void whenCreatingAnUserThenReturnDataIntegrityViolationException() {
-        Mockito.when(repository.save(Mockito.any())).thenThrow(new DataIntegrityViolationException("e-mail already registered!"));
+        Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(userOptional);
 
         try {
-            User response = service.create(userDTO);
+            userOptional.get().setId(2);
+            service.create(userDTO);
         } catch (Exception ex) {
             Assertions.assertEquals(DataIntegrityViolationException.class, ex.getClass());
             Assertions.assertEquals("e-mail already registered!", ex.getMessage());

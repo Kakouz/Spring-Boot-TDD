@@ -3,6 +3,7 @@ package br.com.tdd.api.resources;
 import br.com.tdd.api.domain.User;
 import br.com.tdd.api.domain.dto.UserDTO;
 import br.com.tdd.api.services.impl.UserServiceImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,7 +12,11 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +48,14 @@ class UserResourceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         startUser();
+        HttpServletRequest mockRequest = new MockHttpServletRequest();
+        ServletRequestAttributes servletRequestAttributes = new ServletRequestAttributes(mockRequest);
+        RequestContextHolder.setRequestAttributes(servletRequestAttributes);
+    }
+
+    @AfterEach
+    public void teardown() {
+        RequestContextHolder.resetRequestAttributes();
     }
 
     @Test
@@ -83,7 +96,17 @@ class UserResourceTest {
     }
 
     @Test
-    void create() {
+    void whenCreatingThenReturnHttpStatusCreated() {
+        when(userService.create(any())).thenReturn(user);
+
+        ResponseEntity<UserDTO> response = userResource.create(userDTO);
+
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getHeaders().get("Location"));
+
+
+
     }
 
     @Test

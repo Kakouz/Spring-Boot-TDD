@@ -3,6 +3,7 @@ package br.com.tdd.api.services.impl;
 import br.com.tdd.api.domain.User;
 import br.com.tdd.api.domain.dto.UserDTO;
 import br.com.tdd.api.repositories.UserRepository;
+import br.com.tdd.api.services.exceptions.DataIntegrityViolationException;
 import br.com.tdd.api.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -99,6 +100,19 @@ class UserServiceImplTest {
         Assertions.assertEquals(ID, response.getId());
         Assertions.assertEquals(NAME, response.getName());
         Assertions.assertEquals(EMAIL, response.getEmail());
+    }
+
+    @Test
+    void whenCreatingAnUserThenReturnDataIntegrityViolationException() {
+        Mockito.when(repository.save(Mockito.any())).thenThrow(new DataIntegrityViolationException("e-mail already registered!"));
+
+        try {
+            User response = service.create(userDTO);
+        } catch (Exception ex) {
+            Assertions.assertEquals(DataIntegrityViolationException.class, ex.getClass());
+            Assertions.assertEquals("e-mail already registered!", ex.getMessage());
+        }
+
     }
 
     @Test

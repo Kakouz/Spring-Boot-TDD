@@ -30,6 +30,8 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository repository;
+
+    @Mock
     private ModelMapper mapper;
 
     private User user;
@@ -85,7 +87,18 @@ class UserServiceImplTest {
     }
 
     @Test
-    void create() {
+    void whenCreatingAnUserThenReturnSucess() {
+        Mockito.when(repository.save(Mockito.any())).thenReturn(user);
+
+        User response = service.create(userDTO);
+
+        Assertions.assertNotNull(response);
+
+        Assertions.assertEquals(User.class, user.getClass());
+
+        Assertions.assertEquals(ID, response.getId());
+        Assertions.assertEquals(NAME, response.getName());
+        Assertions.assertEquals(EMAIL, response.getEmail());
     }
 
     @Test

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 class UserResourceTest {
@@ -125,11 +125,22 @@ class UserResourceTest {
         assertEquals(ID, response.getBody().getId());
         assertEquals(NAME, response.getBody().getName());
         assertEquals(EMAIL, response.getBody().getEmail());
+        assertEquals(PASSWORD, response.getBody().getPassword());
 
     }
 
     @Test
-    void delete() {
+    void whenDeletingUserReturnSuccess() {
+        doNothing().when(userService).delete(anyInt());
+        ResponseEntity<UserDTO> response = userResource.delete(ID);
+
+        assertNotNull(response);
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        verify(userService, times(1))
+                .delete(anyInt());
+
     }
 
     private void startUser() {

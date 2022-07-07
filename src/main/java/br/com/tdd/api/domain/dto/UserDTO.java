@@ -5,10 +5,7 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@Data
-@EqualsAndHashCode
 public class UserDTO {
 
     private Integer id;
